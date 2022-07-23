@@ -1,8 +1,5 @@
-from global_hotkeys import *
-
-
 class ControlInput:
-    __exit_call_received = False
+    __bindings = []
 
     def top_mask_up(self):
         print("Top Mask Up")
@@ -10,20 +7,12 @@ class ControlInput:
     def top_mask_down(self):
         print("Top Mask Down")
 
-    def exit_application(self):
-        print("Exiting")
-        stop_checking_hotkeys()
-        self.__exit_call_received = True
-
-    def exit_call_received(self):
-        return self.__exit_call_received
+    def perform_action(self, input_event):
+        if input_event.event_type == 'up':
+            self.__bindings[input_event.name]()
 
     def __init__(self):
-        bindings = [
-            [["up"], None, self.top_mask_up],
-            [["down"], None, self.top_mask_down],
-            [["control", "x"], None, self.exit_application],
-        ]
-
-        register_hotkeys(bindings)
-        start_checking_hotkeys()
+        self.__bindings = {
+            "up": self.top_mask_up,
+            "down": self.top_mask_down,
+        }

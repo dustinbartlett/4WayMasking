@@ -1,7 +1,8 @@
-import time
+import keyboard
 from control_input import ControlInput
+
 
 if __name__ == '__main__':
     c = ControlInput()
-    while not c.exit_call_received():
-        time.sleep(0.1)
+    keyboard.hook(c.perform_action)
+    keyboard.wait('esc')
