@@ -17,8 +17,8 @@ class CncControl:
         while not idle:
             time.sleep(0.25)
             self.serial_port.write(str.encode("?"))
-            self.serial_port.readline()
-            # print(str(self.serial_port.readline()))
+            response = str(self.serial_port.readline())
+            # print(response)
             idle = response.__contains__("Idle")
 
     def __set_value(self, value):
@@ -51,7 +51,7 @@ class CncControl:
         self.__set_value("G90\n")
 
     def __get_axis_list(self, brake_status):
-        return [self.axis_mapping[k.lower()] for k in brake_status if brake_status[k]]
+        return [self.axis_mapping[k.lower()] for k in brake_status if brake_status[k].lower() == "on"]
 
     def __send_gcode(self, gcode, brake_axis_list):
         self.brake_control.brake_off(brake_axis_list)

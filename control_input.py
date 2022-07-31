@@ -9,7 +9,7 @@ class ControlInput:
 
     def recall_save(self, key):
         if self.__save_enabled:
-            self.__screen.safe_position(key)
+            self.__screen.save_position(key)
             self.__save_enabled = False
         else:
             self.__screen.recall_saved_position(key)
