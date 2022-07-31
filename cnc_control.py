@@ -53,11 +53,11 @@ class CncControl:
 
     def __send_gcode(self, gcode, brake_axis_list):
         self.brake_control.brake_off(brake_axis_list)
-        time.sleep(0.3)
+        time.sleep(0.2)
         self.serial_port.write(str.encode(gcode))
         self.serial_port.readline()
         self.__check_for_idle()
-        time.sleep(0.3)
+        time.sleep(0.2)
         self.brake_control.brake_on(brake_axis_list)
 
     def output_state(self):
