@@ -1,4 +1,5 @@
 import RPi.GPIO as GPIO
+import time
 
 
 class BrakeControl:
@@ -6,22 +7,20 @@ class BrakeControl:
     relay1 = 11
     relay2 = 7
     relay3 = 5
-
-    def __init__(self):
-        GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(self.relay1, GPIO.OUT)
-        GPIO.setup(self.relay2, GPIO.OUT)
-        GPIO.setup(self.relay3, GPIO.OUT)
+    relays = [relay1, relay2, relay3]
 
     def brake_off(self):
-        GPIO.output(self.relay1, GPIO.HIGH)
-        GPIO.output(self.relay2, GPIO.HIGH)
-        GPIO.output(self.relay3, GPIO.HIGH)
+        GPIO.output(self.relays, GPIO.LOW)
 
     def brake_on(self):
-        GPIO.output(self.relay1, GPIO.LOW)
-        GPIO.output(self.relay2, GPIO.LOW)
-        GPIO.output(self.relay3, GPIO.LOW)
+        GPIO.output(self.relays, GPIO.HIGH)
 
-    def shut_down(self):
+    @staticmethod
+    def shut_down():
         GPIO.cleanup()
+
+    def __init__(self):
+        GPIO.setwarnings(False)
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setup(self.relays, GPIO.OUT)
+        self.brake_on()
