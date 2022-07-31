@@ -2,6 +2,17 @@ class ControlInput:
     __bindings = None
     __screen = None
     __rate = 30
+    __save_enabled = False
+
+    def enable_save(self):
+        self.__save_enabled = True
+
+    def recall_save(self, key):
+        if self.__save_enabled:
+            self.__screen.safe_position(key)
+            self.__save_enabled = False
+        else:
+            self.__screen.recall_saved_position(key)
 
     def set_rate_fine(self):
         self.__rate = 1
@@ -32,8 +43,10 @@ class ControlInput:
 
     def perform_action(self, input_event):
         if input_event.event_type == 'up':
-            print(input_event.name)
-            self.__bindings[input_event.name]()
+            if input_event.name in self.__bindings:
+                self.__bindings[input_event.name]()
+            else:
+                self.recall_save(input_event.name)
 
     def __init__(self, screen):
         self.__screen = screen
@@ -47,4 +60,5 @@ class ControlInput:
             "1": self.set_rate_fine,
             "2": self.set_rate_small,
             "3": self.set_rate_coarse,
+            "r": self.enable_save,
         }

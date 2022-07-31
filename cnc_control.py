@@ -17,20 +17,22 @@ class CncControl:
         while not idle:
             time.sleep(0.25)
             self.serial_port.write(str.encode("?"))
-            response = str(self.serial_port.readline())
-            print(response)
+            self.serial_port.readline()
+            # print(str(self.serial_port.readline()))
             idle = response.__contains__("Idle")
 
     def __set_value(self, value):
         self.serial_port.write(str.encode(value))
-        print(str(self.serial_port.readline()) + " (" + value.strip('\n') + ")")
+        self.serial_port.readline()
+        # print(str(self.serial_port.readline()) + " (" + value.strip('\n') + ")")
 
     def __configure_grbl_state(self):
         self.serial_port = serial.Serial('/dev/ttyUSB0', 115200)
         self.serial_port.write(str.encode("\r\n\r\n"))
         time.sleep(2)  # Wait for grbl to initialize
         while self.serial_port.in_waiting:
-            print(str(self.serial_port.readline()))
+            self.serial_port.readline()
+            # print(str(self.serial_port.readline()))
         self.__set_value("$X\n")
         self.__set_value("$3=0\n")
         self.__set_value("$20=0\n")
