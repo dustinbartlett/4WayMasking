@@ -1,7 +1,7 @@
 class ControlInput:
     __bindings = None
     __screen = None
-    __rate = 30
+    __rate = 10
     __save_enabled = False
 
     def enable_save(self):
@@ -14,51 +14,38 @@ class ControlInput:
         else:
             self.__screen.recall_saved_position(key)
 
-    def set_rate_fine(self):
-        self.__rate = 1
+    def set_rate(self, rate):
+        self.__rate = rate
 
-    def set_rate_small(self):
-        self.__rate = 5
+    def mask_less(self, mask):
+        self.__screen.increment_mask_position(mask, self.__rate)
 
-    def set_rate_coarse(self):
-        self.__rate = 30
-
-    def top_mask_up(self):
-        self.__screen.increment_mask_position("top", self.__rate)
-
-    def top_mask_down(self):
-        self.__screen.increment_mask_position("top", -abs(self.__rate))
-
-    def bottom_mask_up(self):
-        self.__screen.increment_mask_position("bottom", self.__rate)
-
-    def bottom_mask_down(self):
-        self.__screen.increment_mask_position("bottom", -abs(self.__rate))
-
-    def vertical_masks_in(self):
-        self.__screen.increment_mask_position("vertical", self.__rate)
-
-    def vertical_masks_out(self):
-        self.__screen.increment_mask_position("vertical", -abs(self.__rate))
+    def mask_more(self, mask):
+        self.__screen.increment_mask_position(mask, -abs(self.__rate))
 
     def perform_action(self, input_event):
         if input_event.event_type == 'up':
             if input_event.name in self.__bindings:
-                self.__bindings[input_event.name]()
+                call_tuple = self.__bindings[input_event.name]
+                if len(call_tuple) == 2:
+                    call_tuple[0](call_tuple[1])
+                else:
+                    call_tuple[0]()
             else:
                 self.recall_save(input_event.name)
 
     def __init__(self, screen):
         self.__screen = screen
         self.__bindings = {
-            "up": self.top_mask_up,
-            "down": self.top_mask_down,
-            "left": self.vertical_masks_in,
-            "right": self.vertical_masks_out,
-            "page up": self.bottom_mask_up,
-            "page down": self.bottom_mask_down,
-            "1": self.set_rate_fine,
-            "2": self.set_rate_small,
-            "3": self.set_rate_coarse,
-            "r": self.enable_save,
+            "up": (self.mask_less, "top"),
+            "down": (self.mask_more, "top"),
+            "left": (self.mask_less, "vertical"),
+            "right": (self.mask_more, "vertical"),
+            "page up": (self.mask_less, "bottom"),
+            "page down": (self.mask_more, "bottom"),
+            "1": (self.set_rate, 0.25),
+            "2": (self.set_rate, 1),
+            "3": (self.set_rate, 10),
+            "4": (self.set_rate, 40),
+            "r": (self.enable_save,),
         }
