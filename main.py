@@ -13,5 +13,4 @@ if __name__ == '__main__':
     keyboard.hook(c.perform_action)
     keyboard.wait('esc')
     cnc.clean_up()
-    b.shut_down()
 
